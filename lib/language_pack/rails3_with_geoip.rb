@@ -25,8 +25,6 @@ require 'zlib'
 require 'stringio'
 
 class LanguagePack::Rails3WithGeoip < LanguagePack::Rails3
-  LICENSE_KEY = ENV['GEOIP_KEY']
-
   # detects if this is a Rails 3.x app with GeoIP
   # @return [Boolean] true if it's a Rails 3.x app with GeoIP
   def self.use?
@@ -59,6 +57,10 @@ private
     end
   end
 
+  def license_key
+    run('echo $GEOIP_KEY')
+  end
+
   def outfile
     'config/GeoIP.dat'
   end
@@ -89,7 +91,7 @@ private
   # Fetch GeoIP country file from MaxMind
   def get_result_for(md5)
     url = "ht" + "tp://www.maxmind.com/app/update?"
-    url += "license_key=#{LICENSE_KEY}&md5=#{md5}"
+    url += "license_key=#{license_key}&md5=#{md5}"
 
     puts "Fetching data from #{url}"
 
