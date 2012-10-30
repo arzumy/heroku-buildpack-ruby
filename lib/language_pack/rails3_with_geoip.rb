@@ -47,7 +47,7 @@ private
 
   def update_geoip_data
     if update_available?
-      content = get_result_for(LICENSE_KEY, current_md5sum)
+      content = get_result_for(current_md5sum)
       File.open(tmpfile, 'w') do |f|
         f.write(content)
       end
@@ -77,7 +77,7 @@ private
 
   def update_available?
     omd5sum = Digest::MD5.hexdigest(File.open(outfile, 'r').read) rescue nil
-    content = get_result_for(LICENSE_KEY, omd5sum)
+    content = get_result_for(omd5sum)
     if content =~ /No new updates available/
       false
     else
@@ -87,11 +87,11 @@ private
   end
 
   # Fetch GeoIP country file from MaxMind
-  def get_result_for(key, md5)
+  def get_result_for(md5)
     url = "ht" + "tp://www.maxmind.com/app/update?"
-    url += "license_key=#{key}&md5=#{md5}"
+    url += "license_key=#{LICENSE_KEY}&md5=#{md5}"
 
-    puts "Fetching data..."
+    puts "Fetching data from #{url}"
 
     content = nil
     open(url) do |io|
