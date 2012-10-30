@@ -17,15 +17,31 @@
   Butchered by Arzumy MD
 =end
 
+require "language_pack"
+require "language_pack/rails3"
 require 'digest/md5'
 require 'open-uri'
 require 'zlib'
 require 'stringio'
 
-class GeoIPUpdate
+class LanguagePack::Rails3WithGeoip < LanguagePack::Rails3
   LICENSE_KEY = ENV['GEOIP_KEY']
 
-  def initialize
+  # detects if this is a Rails 3.x app with GeoIP
+  # @return [Boolean] true if it's a Rails 3.x app with GeoIP
+  def self.use?
+    super &&
+      File.exists?("config/GeoIP.dat")
+  end
+
+  def compile
+    super
+    update_geoip_data
+  end
+
+private
+
+  def update_geoip_data
     if update_available?
       content = get_result_for(LICENSE_KEY, current_md5sum)
       File.open(tmpfile, 'w') do |f|
@@ -33,18 +49,10 @@ class GeoIPUpdate
       end
       File.unlink(outfile) if FileTest.exists?(outfile)
       File.rename(tmpfile, outfile)
-      success = true
+      puts "GeoIP.dat created"
     else
-      success = false
+      puts "GeoIP.dat not created"
     end
-  end
-
-  def success=(boolean)
-    @status ||= boolean
-  end
-
-  def success?
-    @status
   end
 
   def outfile

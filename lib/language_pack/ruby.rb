@@ -59,7 +59,6 @@ class LanguagePack::Ruby < LanguagePack::Base
       create_database_yml
       install_binaries
       run_assets_precompile_rake_task
-      update_geoip_data
     end
   end
 
@@ -631,12 +630,5 @@ params = CGI.parse(uri.query || "")
     cache_clear bundler_cache
     # need to reinstall language pack gems
     install_language_pack_gems
-  end
-
-  def update_geoip_data
-    geoip = GeoIPUpdate.new
-    unless geoip.success?
-      puts "GeoIP.dat not created"
-    end
   end
 end
