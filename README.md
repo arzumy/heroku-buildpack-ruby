@@ -1,4 +1,4 @@
-Heroku buildpack: Ruby
+Heroku buildpack: Ruby with Maxmind GeoIP.dat
 ======================
 
 This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks) for Ruby, Rack, and Rails apps. It uses [Bundler](http://gembundler.com) for dependency management.
