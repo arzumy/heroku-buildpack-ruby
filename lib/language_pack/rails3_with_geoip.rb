@@ -34,6 +34,10 @@ class LanguagePack::Rails3WithGeoip < LanguagePack::Rails3
       File.exists?("config/GeoIP.dat")
   end
 
+  def name
+    "Ruby/Rails3 with GeoIP"
+  end
+
   def compile
     super
     update_geoip_data
