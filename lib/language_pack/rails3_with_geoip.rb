@@ -58,7 +58,8 @@ private
   end
 
   def license_key
-    run('echo $GEOIP_KEY')
+    # using heroku labs:enable user-env-compile
+    ENV['GEOIP_KEY']
   end
 
   def outfile
