@@ -44,57 +44,25 @@ class LanguagePack::Rails3WithGeoip < LanguagePack::Rails3
 private
 
   def update_geoip_data
-    if update_available?
-      content = get_result_for(current_md5sum)
-      File.open(tmpfile, 'w') do |f|
-        f.write(content)
-      end
-      File.unlink(outfile) if FileTest.exists?(outfile)
-      File.rename(tmpfile, outfile)
-      puts "GeoIP.dat created"
-    else
-      puts "GeoIP.dat not created"
+    content = get_result_for(current_md5sum)
+    File.open(outfile, 'w') do |f|
+      f.write(content)
     end
+    puts "GeoIP.dat created"
   end
 
-  def license_key
+  def geoip_dat_url
     # using heroku labs:enable user-env-compile
-    ENV['GEOIP_KEY']
+    ENV['GEOIP_DAT_URL']
   end
 
   def outfile
     'config/GeoIP.dat'
   end
 
-  def tmpfile
-    'tmp/GeoIP.dat'
-  end
-
-  def current_md5sum=(content)
-    @current_md5sum ||= Digest::MD5.hexdigest(content)
-  end
-
-  def current_md5sum
-    @current_md5sum
-  end
-
-  def update_available?
-    omd5sum = Digest::MD5.hexdigest(File.open(outfile, 'r').read) rescue nil
-    content = get_result_for(omd5sum)
-    if content =~ /No new updates available/
-      false
-    else
-      current_md5sum = content
-      true
-    end
-  end
-
-  # Fetch GeoIP country file from MaxMind
+  # Fetch GeoIP country cached file
   def get_result_for(md5)
-    url = "ht" + "tp://www.maxmind.com/app/update?"
-    url += "license_key=#{license_key}&md5=#{md5}"
-
-    puts "Fetching data from #{url}"
+    puts "Fetching data from #{geoip_dat_url}"
 
     content = nil
     open(url) do |io|
